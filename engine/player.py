@@ -3,18 +3,34 @@ from engine import sprites
 
 
 class Player(sprites.AnimatedSprite):
-    def __init__(self, pos, speed):
+    def __init__(self, pos, speed, objects: pg.sprite.Group):
         super().__init__(32, 'idle')
         self.speed = speed
         self.add_animation('data/player', r'player1.png', 'idle')
         self.add_animation('data/player', r'player.\.png', 'walk')
         self.rect = self.image.get_rect(center=pos)
+        self.objects = objects
+        self.collider = pg.Rect(self.rect)
+        self.collider.size = (self.rect.width - 12, 2)
+        self.collider.y += 30
+        self.collider.x += 6
+        self.collider_sprite = pg.sprite.Sprite()
+        self.collider_sprite.rect = self.collider
 
     def update(self):
         pass
 
     def move(self, vector):
-        self.rect.move_ip(vector)
+        self.rect.x += vector[0]
+        self.collider.x += vector[0]
+        if pg.sprite.spritecollideany(self.collider_sprite, self.objects):
+            self.rect.x -= vector[0]
+            self.collider.x -= vector[0]
+        self.rect.y += vector[1]
+        self.collider.y += vector[1]
+        if pg.sprite.spritecollideany(self.collider_sprite, self.objects):
+            self.rect.y -= vector[1]
+            self.collider.y -= vector[1]
 
     def handle_input(self, keys):
         if keys[pg.K_w]:

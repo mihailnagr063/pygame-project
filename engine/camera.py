@@ -10,6 +10,9 @@ class Camera(pg.sprite.Group):
         self.hw, self.hh = self.sw // 2, self.sh // 2
         self.background = []
 
+    def add_objects(self, group):
+        self.add(group)
+
     def center_at(self, target):
         self.offset.x = self.hw - target.rect.centerx
         self.offset.y = self.hh - target.rect.centery
@@ -23,3 +26,6 @@ class Camera(pg.sprite.Group):
             surface.blit(bg.image, bg.rect.topleft + self.offset)
         for sprite in sorted(self.sprites(), key=lambda x: x.rect.centery):
             surface.blit(sprite.image, sprite.rect.topleft + self.offset)
+
+    def blit(self, surface, image, rect):
+        surface.blit(image, rect.topleft + self.offset)

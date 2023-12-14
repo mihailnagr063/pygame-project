@@ -5,17 +5,22 @@ pg.init()
 size = w, h = 800, 600
 half_size = hw, hh = w // 2, h // 2
 win = pg.display.set_mode(size)
+pg.display.set_caption('Pygame Project')
 clk = pg.time.Clock()
 font = pg.font.SysFont('Arial', 12)
 
+tilemap_pos = (0, 0)
 tileset = engine.TileSet({
     ' ': 'data/map/empty.png',
     '#': 'data/map/wall.png',
+    'C': 'data/objects/chest.png'
 }, 32)
-tilemap = engine.TileMap('maps/map.txt', tileset)
-player = engine.Player((10, 10), 4)
+tilemap = engine.TileMap('maps/map.background.txt', tileset)
+objects = engine.Objects('maps/map.objects.txt', tilemap_pos, tileset)
+player = engine.Player((10, 10), 4, objects)
 camera = engine.Camera(player, size)
 camera.add_background(tilemap)
+camera.add_objects(objects)
 camera.add(player)
 
 ANIM_TICK = pg.USEREVENT + 1
