@@ -1,15 +1,15 @@
 import pygame as pg
 from engine import sprites, map
+from globals import *
 
 
 class Player(sprites.AnimatedSprite):
-    def __init__(self, pos, speed, objects: map.Objects):
+    def __init__(self, pos, speed):
         super().__init__(32, 'idle')
         self.speed = speed
-        self.add_animation('data/player', r'player1.png', 'idle')
-        self.add_animation('data/player', r'player.\.png', 'walk')
+        self.add_animation('data/player', r'player1', 'idle')
+        self.add_animation('data/player', r'player', 'walk')
         self.rect = self.image.get_rect(center=pos)
-        self.objects = objects
         self.collider = pg.Rect(self.rect)
         self.collider.size = (self.rect.width - 12, 2)
         self.collider.y += 30
@@ -23,12 +23,12 @@ class Player(sprites.AnimatedSprite):
     def move(self, vector):
         self.rect.x += vector[0]
         self.collider.x += vector[0]
-        if self.objects.is_colliding(self.collider):
+        if pg.sprite.spritecollideany(self.collider_sprite, Globals.objects):
             self.rect.x -= vector[0]
             self.collider.x -= vector[0]
         self.rect.y += vector[1]
         self.collider.y += vector[1]
-        if self.objects.is_colliding(self.collider):
+        if pg.sprite.spritecollideany(self.collider_sprite, Globals.objects):
             self.rect.y -= vector[1]
             self.collider.y -= vector[1]
 

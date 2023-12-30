@@ -21,14 +21,30 @@ class Camera(pg.sprite.Group):
     def add_background(self, *sprites):
         self.background.extend(sprites)
 
+    def add_sprite(self, sprites):
+        self.add(sprites)
+        self.resort()
+
+    def resort(self):
+        self.sprites().sort(key=lambda x: x.rect.centery)
+
     def draw_ysort(self, surface):
         self.center_at(self.target)
         for bg in self.background:
             surface.blit(bg.image, bg.rect.topleft + self.offset)
         for sprite in self.no_ysort:
             surface.blit(sprite.image, sprite.rect.topleft + self.offset)
-        for sprite in sorted(self.sprites(), key=lambda x: x.rect.centery):
+        for sprite in self.sprites():
             surface.blit(sprite.image, sprite.rect.topleft + self.offset)
 
     def blit(self, surface, image, rect):
         surface.blit(image, rect.topleft + self.offset)
+
+    def screen_to_world(self, pos):
+        return pos - self.offset
+
+    def world_to_screen(self, pos):
+        return pos + self.offset
+
+    def rect_world_to_screen(self, rect):
+        return rect.move(self.offset)
