@@ -24,6 +24,9 @@ class Player(sprites.AnimatedSprite):
     def update(self):
         pass
 
+    def get_health(self):
+        return self.health
+
     def move(self, vector):
         self.rect.x += vector[0]
         self.collider.x += vector[0]

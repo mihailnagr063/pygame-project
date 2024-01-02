@@ -39,6 +39,8 @@ for obj in layer:
     elif obj.type == 'enemy':
         camera.add(game.enemies.Enemy((obj.x * 2, obj.y * 2)))
 
+health_bar = engine.gui.ProgressBar((10, 10), (128, 24), group=Globals.sprites, watch_func=player.get_health)
+
 if not game.screens.start_screen(win, clk):
     pg.quit()
     exit()
@@ -71,7 +73,9 @@ while running:
     Globals.sprites.update()
     Globals.anim_sprites.update()
     player.handle_input(pg.key.get_pressed())
-    player.update()
+    if player.health <= 0:
+        game.screens.gameover_screen(win, clk)
+        running = False
     win.fill('#212121')
     camera.draw_ysort(win)
     Globals.sprites.draw(win)

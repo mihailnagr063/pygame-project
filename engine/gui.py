@@ -88,3 +88,33 @@ class Label(pg.sprite.Sprite):
         self.image = pg.font.Font(Globals.font_path, size).render(text, False, 'white')
         self.rect = self.image.get_rect(center=pos)
 
+
+class ProgressBar(pg.sprite.Sprite):
+    def __init__(self, pos, size, maxp=100, group=None, margin=4, color='#d74e33', watch_func=None):
+        super().__init__(group)
+        self.image = pg.Surface(size)
+        self.rect = self.image.get_rect(topleft=pos)
+        self.max = maxp
+        self.current = 0
+        self.margin = margin
+        self.color = color
+        self.ppu = (size[0] - margin * 2) / maxp
+        self.watch_func = watch_func
+        self.render()
+        if self.watch_func:
+            self.update = self.update_wf
+
+    def update_wf(self):
+        self.current = self.watch_func()
+        self.render()
+
+    def set_value(self, value):
+        self.current = value
+        self.render()
+
+    def render(self):
+        self.image.fill('#2b2f35')
+        pg.draw.rect(self.image, '#484744', (self.margin, self.margin,
+                                             self.rect.width - self.margin * 2, self.rect.height - self.margin * 2))
+        pg.draw.rect(self.image, self.color, (self.margin, self.margin,
+                                              self.current * self.ppu, self.rect.height - self.margin * 2))
