@@ -1,10 +1,11 @@
 import pygame as pg
+import pytmx
 import engine
 import game
 from globals import *
 
-
 pg.init()
+pg.mixer.init()
 size = w, h = 800, 600
 half_size = hw, hh = w // 2, h // 2
 win = pg.display.set_mode(size)
@@ -12,29 +13,36 @@ pg.display.set_caption('Pygame Project')
 clk = pg.time.Clock()
 Globals.anim_sprites = engine.sprites.AnimatedSpriteGroup()
 
-tilemap_pos = (-200, -150)
-tileset = engine.TileSet({
-    ' ': 'data/map/empty.png',
-    '#': 'data/map/wall.png',
-    'C': 'data/objects/chest.png'
-}, 32)
-tilemap = engine.TileMap('maps/map.txt', tileset)
-player = game.player.Player((10, 10), 4)
-objects = engine.Objects('maps/map.txt', tilemap_pos, tileset, game.objects.object_map)
+tiled_map = pytmx.load_pygame('data/map.tmx')
+
+tilemap = engine.TileMap(tiled_map, 32)
+player = game.player.Player((0, 0), 4)
+objects = engine.Objects(tiled_map, game.objects.object_map)
 camera = engine.Camera(player, size)
 camera.add_background(tilemap)
 camera.add_sprite(objects)
 camera.add_sprite(player)
 
-Globals.font_small = pg.font.Font('data/font.ttf', 16)
-Globals.font_big = pg.font.Font('data/font.ttf', 32)
+Globals.font_small = pg.font.Font(Globals.font_path, 16)
+Globals.font_big = pg.font.Font(Globals.font_path, 32)
 Globals.player = player
 Globals.world = tilemap
 Globals.objects = objects
 Globals.camera = camera
 
-enemy = game.enemies.Enemy((0, 0))
-camera.add_sprite(enemy)
+layer: pytmx.TiledObjectGroup = [l for l in tiled_map.layers if l.name == 'objects'][0]
+for obj in layer:
+    obj: pytmx.TiledObject
+    if obj.name == 'player':
+        player.rect.center = (obj.x * 2, obj.y * 2)
+        player.collider.move_ip(obj.x * 2, obj.y * 2)
+    elif obj.type == 'enemy':
+        camera.add(game.enemies.Enemy((obj.x * 2, obj.y * 2)))
+
+if not game.screens.start_screen(win, clk):
+    pg.quit()
+    exit()
+
 
 ANIM_TICK = pg.USEREVENT + 1
 pg.time.set_timer(ANIM_TICK, 100)
@@ -47,17 +55,24 @@ while running:
             running = False
         elif ev.type == ANIM_TICK:
             Globals.anim_sprites.tick()
-            enemy.enemy_tick()
+            for en in Globals.enemies:
+                en.enemy_tick()
         elif ev.type == pg.MOUSEBUTTONDOWN:
             objects.handle_click(camera.screen_to_world(ev.pos))
         elif ev.type == pg.KEYDOWN:
             if ev.key == pg.K_F1:
                 dbg_mode = not dbg_mode
+            elif ev.key == pg.K_ESCAPE:
+                if not game.pause_screen(win, clk):
+                    running = False
+            elif ev.key == pg.K_p:
+                game.screens.gameover_screen(win, clk)
+                running = False
     Globals.sprites.update()
     Globals.anim_sprites.update()
     player.handle_input(pg.key.get_pressed())
     player.update()
-    win.fill('black')
+    win.fill('#212121')
     camera.draw_ysort(win)
     Globals.sprites.draw(win)
     if dbg_mode:
@@ -68,3 +83,5 @@ while running:
         win.blit(Globals.font_small.render(f'FPS: {clk.get_fps():.2f}', True, 'white'), (10, 10))
     pg.display.update()
     clk.tick(60)
+
+pg.quit()

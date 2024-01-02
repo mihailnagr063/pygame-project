@@ -9,22 +9,26 @@ class AnimatedSprite(pg.sprite.Sprite):
         super().__init__(Globals.anim_sprites)
         self.state = state
         self.size = size
-        self.image = pg.Surface((size, size))
+        self.image = pg.Surface(size)
         self.rect = self.image.get_rect()
         self.progress = 0
         self.animations = {}
 
-    def add_animation(self, folder, start, name):
+    def add_animation(self, sheet, name, size):
+        # cut sprite sheet
         self.animations[name] = []
-        for file in sorted(os.listdir(folder)):
-            if file.startswith(start):
-                self.animations[name].append(pg.transform.scale(
-                    pg.image.load(os.path.join(folder, file)).convert_alpha(), (self.size, self.size))
-                )
+        sheet = pg.image.load(sheet).convert_alpha()
+        for y in range(sheet.get_height() // size[1]):
+            for x in range(sheet.get_width() // size[0]):
+                self.animations[name].append(
+                    pg.transform.scale(sheet.subsurface((x * size[0], y * size[1], size[0], size[1])), self.size))
 
     def tick(self):
-        self.progress = (self.progress + 1) % len(self.animations[self.state])
-        self.image = self.animations[self.state][self.progress]
+        try:
+            self.progress = (self.progress + 1) % len(self.animations[self.state])
+            self.image = self.animations[self.state][self.progress]
+        except:
+            pass
 
 
 class AnimatedSpriteGroup(pg.sprite.Group):

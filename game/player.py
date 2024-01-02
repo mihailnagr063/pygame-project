@@ -5,14 +5,18 @@ from globals import *
 
 class Player(sprites.AnimatedSprite):
     def __init__(self, pos, speed):
-        super().__init__(32, 'idle')
+        super().__init__((32, 64), 'idle')
+        self.health = 100
         self.speed = speed
-        self.add_animation('data/player', r'player1', 'idle')
-        self.add_animation('data/player', r'player', 'walk')
+        self.add_animation('data/player/down.png', 'down', (16, 32))
+        self.add_animation('data/player/up.png', 'up', (16, 32))
+        self.add_animation('data/player/left.png', 'left', (16, 32))
+        self.add_animation('data/player/right.png', 'right', (16, 32))
+        self.add_animation('data/player/idle.png', 'idle', (16, 32))
         self.rect = self.image.get_rect(center=pos)
         self.collider = pg.Rect(self.rect)
         self.collider.size = (self.rect.width - 12, 2)
-        self.collider.y += 30
+        self.collider.y += 48
         self.collider.x += 6
         self.collider_sprite = pg.sprite.Sprite()
         self.collider_sprite.rect = self.collider
@@ -35,13 +39,15 @@ class Player(sprites.AnimatedSprite):
     def handle_input(self, keys):
         if keys[pg.K_w]:
             self.move((0, -self.speed))
+            self.state = 'up'
         elif keys[pg.K_s]:
             self.move((0, self.speed))
+            self.state = 'down'
         if keys[pg.K_a]:
             self.move((-self.speed, 0))
+            self.state = 'left'
         elif keys[pg.K_d]:
             self.move((self.speed, 0))
-        if keys[pg.K_w] or keys[pg.K_s] or keys[pg.K_a] or keys[pg.K_d]:
-            self.state = 'walk'
-        else:
+            self.state = 'right'
+        elif not keys[pg.K_w] and not keys[pg.K_s]:
             self.state = 'idle'
