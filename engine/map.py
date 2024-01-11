@@ -1,20 +1,6 @@
 import pygame as pg
 import pytmx
 
-BG_TILES = [' ']
-
-
-class TileSet:
-    def __init__(self, mapping, tile_size):
-        self.mapping = mapping
-        self.tiles = {}
-        self.tile_size = tile_size
-        self.load_tiles()
-
-    def load_tiles(self):
-        for key, value in self.mapping.items():
-            self.tiles[key] = pg.transform.scale(pg.image.load(value).convert_alpha(), (self.tile_size, self.tile_size))
-
 
 class TileMap(pg.sprite.Sprite):
     def __init__(self, tiled_map: pytmx.TiledMap, tile_size):
