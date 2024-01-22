@@ -1,6 +1,9 @@
 import pygame as pg
+from random import choice
+import game
 from engine import sprites, utils
 from globals import *
+
 
 
 class Enemy(sprites.AnimatedSprite):
@@ -10,11 +13,17 @@ class Enemy(sprites.AnimatedSprite):
     reload: int
 
     def __init__(self, pos):
-        super().__init__((32, 64), 'walk')
+        super().__init__((32, 64), f'{choice(["walk", "walk2", "walk3"])}')
         self.speed = 4
+        self.hp = 50
+        self.damage = 10
+        self.cool_down = 5
+        self.time_check = 0
         self.rect = self.image.get_rect(center=pos)
         self.direction = pg.Vector2(0, 0)
-        self.add_animation('data/player/down.png', 'walk', (16, 32))
+        self.add_animation('data/enemies/lynel2.png', 'walk', (16, 16))
+        self.add_animation('data/enemies/moblin2.png', 'walk2', (16, 16))
+        self.add_animation('data/enemies/octorok-red.png', 'walk3', (16, 16))
         self.collider = pg.Rect(self.rect)
         self.collider.size = (self.rect.width - 12, 8)
         self.collider.y += 24
@@ -56,5 +65,47 @@ class Enemy(sprites.AnimatedSprite):
         self.is_reloading = True
         self.reloading_status = 0
 
+    def cooldown(self):
+        if self.cool_down >= 15:
+            self.cool_down = 0
+        elif self.cool_down > 0:
+            self.cool_down += 1
+
+    def check_enemy(self):
+        delyte = []
+        for i in range(len(Globals.enemies)):
+            if '2' not in f'{Globals.enemies[i]}':
+                delyte.append(i)
+        [Globals.enemies.pop(n) for n in delyte]
+        Globals.player.score += (len(delyte)) * 10
+        Globals.player.killed += (len(delyte))
+
+    def enemy_update_pos(self):
+        last = Globals.player.last_pos
+        if last == 'up':
+            self.direction.y -= 8
+        elif last == 'down':
+            self.direction.y += 8
+        elif last == 'right':
+            self.direction.x += 8
+        elif last == 'left':
+            self.direction.x += 8
+
     def attack(self, dist):
-        pass
+        self.check_enemy()
+        self.cooldown()
+        if dist <= 32 and self.cool_down == 0:
+            Globals.player.health -= self.damage
+            self.cool_down = 1
+        if dist <= 64 and Globals.player.attack():
+            if self.hp - Globals.player.damage == 0 and Globals.player.health < 100:
+                if Globals.player.health + 10 > 100:
+                    Globals.player.health = 100
+                else:
+                    Globals.player.health += 10
+            self.hp -= Globals.player.damage
+            self.enemy_update_pos()
+        elif Globals.player.attack():
+            Globals.player.score -= 2
+        if self.hp <= 0:
+            self.kill()

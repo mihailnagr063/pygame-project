@@ -13,6 +13,10 @@ pg.display.set_caption('Pygame Project')
 clk = pg.time.Clock()
 Globals.anim_sprites = engine.sprites.AnimatedSpriteGroup()
 
+pg.mixer.music.load('music/start_screen.mp3')
+pg.mixer.music.play(-1)
+pg.mixer.music.set_volume(0.1)
+
 tiled_map = pytmx.load_pygame('data/map.tmx')
 
 tilemap = engine.TileMap(tiled_map, 32)
@@ -40,17 +44,16 @@ for obj in layer:
         camera.add(game.enemies.Enemy((obj.x * 2, obj.y * 2)))
 
 health_bar = engine.gui.ProgressBar((10, 10), (128, 24), group=Globals.sprites, watch_func=player.get_health)
-
 if not game.screens.start_screen(win, clk):
     pg.quit()
     exit()
-
 
 ANIM_TICK = pg.USEREVENT + 1
 pg.time.set_timer(ANIM_TICK, 100)
 
 dbg_mode = False
 running = True
+pg.mixer.music.stop()
 while running:
     for ev in pg.event.get():
         if ev.type == pg.QUIT:
@@ -76,9 +79,13 @@ while running:
     if player.health <= 0:
         game.screens.gameover_screen(win, clk)
         running = False
+    if player.killed == 8:
+        game.screens.winer_screen(win, clk)
+        running = False
     win.fill('#212121')
     camera.draw_ysort(win)
     Globals.sprites.draw(win)
+    Globals.player.print_text(f'score: {Globals.player.health + Globals.player.score}', 10, 40, win)
     if dbg_mode:
         for s in camera.sprites():
             pg.draw.rect(win, 'red', camera.rect_world_to_screen(s.rect), 1)
