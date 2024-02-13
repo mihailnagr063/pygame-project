@@ -15,7 +15,6 @@ class AnimatedSprite(pg.sprite.Sprite):
         self.animations = {}
 
     def add_animation(self, sheet, name, size):
-        # cut sprite sheet
         self.animations[name] = []
         sheet = pg.image.load(sheet).convert_alpha()
         for y in range(sheet.get_height() // size[1]):

@@ -8,7 +8,7 @@ class TileMap(pg.sprite.Sprite):
         self.tile_size = tile_size
         self.map = tiled_map
         self.layer = [l for l in tiled_map.layers if l.name == 'background'][0]
-        self.image = pg.Surface((self.tile_size * self.map.width, self.tile_size * self.map.height))
+        self.image = pg.Surface((self.tile_size * self.map.width, self.tile_size * self.map.height), pg.SRCALPHA)
         self.rect = self.image.get_rect(topleft=(0, 0))
         self.rerender()
 

@@ -6,11 +6,18 @@ from globals import *
 
 pg.init()
 pg.mixer.init()
-size = w, h = 800, 600
+size = w, h = 1280, 720
 half_size = hw, hh = w // 2, h // 2
 win = pg.display.set_mode(size)
 pg.display.set_caption('Pygame Project')
 clk = pg.time.Clock()
+
+lbl = engine.gui.Label((0, 0), 48, 'loading...', pg.sprite.Group())
+lbl.rect.bottomleft = (16, h - 16)
+win.blit(lbl.image, lbl.rect)
+pg.display.update()
+del lbl
+
 Globals.anim_sprites = engine.sprites.AnimatedSpriteGroup()
 
 pg.mixer.music.load('music/start_screen.mp3')
@@ -33,6 +40,7 @@ Globals.player = player
 Globals.world = tilemap
 Globals.objects = objects
 Globals.camera = camera
+player.movement_bounds = (tilemap.image.get_width(), tilemap.image.get_height())
 
 layer: pytmx.TiledObjectGroup = [l for l in tiled_map.layers if l.name == 'objects'][0]
 for obj in layer:
@@ -79,10 +87,7 @@ while running:
     if player.health <= 0:
         game.screens.gameover_screen(win, clk)
         running = False
-    if player.killed == 8:
-        game.screens.winer_screen(win, clk)
-        running = False
-    win.fill('#212121')
+    win.fill((58, 190, 65))
     camera.draw_ysort(win)
     Globals.sprites.draw(win)
     Globals.player.print_text(f'score: {Globals.player.health + Globals.player.score}', 10, 40, win)
