@@ -20,6 +20,7 @@ class Player(sprites.AnimatedSprite):
         self.collider.x += 6
         self.collider_sprite = pg.sprite.Sprite()
         self.collider_sprite.rect = self.collider
+        self.movement_bounds = (1000, 1000)
 
     def update(self):
         pass
@@ -30,12 +31,14 @@ class Player(sprites.AnimatedSprite):
     def move(self, vector):
         self.rect.x += vector[0]
         self.collider.x += vector[0]
-        if pg.sprite.spritecollideany(self.collider_sprite, Globals.objects):
+        if pg.sprite.spritecollideany(self.collider_sprite, Globals.objects)\
+                or self.rect.x < 32 or self.rect.x + 64 > self.movement_bounds[0]:
             self.rect.x -= vector[0]
             self.collider.x -= vector[0]
         self.rect.y += vector[1]
         self.collider.y += vector[1]
-        if pg.sprite.spritecollideany(self.collider_sprite, Globals.objects):
+        if pg.sprite.spritecollideany(self.collider_sprite, Globals.objects)\
+                or self.rect.y < 32 or self.rect.y + 96 > self.movement_bounds[1]:
             self.rect.y -= vector[1]
             self.collider.y -= vector[1]
 

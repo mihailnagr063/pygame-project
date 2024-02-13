@@ -6,13 +6,19 @@ from globals import *
 
 pg.init()
 pg.mixer.init()
-size = w, h = 800, 600
+size = w, h = 1280, 720
 half_size = hw, hh = w // 2, h // 2
 win = pg.display.set_mode(size)
 pg.display.set_caption('Pygame Project')
 clk = pg.time.Clock()
-Globals.anim_sprites = engine.sprites.AnimatedSpriteGroup()
 
+lbl = engine.gui.Label((0, 0), 48, 'loading...', pg.sprite.Group())
+lbl.rect.bottomleft = (16, h - 16)
+win.blit(lbl.image, lbl.rect)
+pg.display.update()
+del lbl
+
+Globals.anim_sprites = engine.sprites.AnimatedSpriteGroup()
 tiled_map = pytmx.load_pygame('data/map.tmx')
 
 tilemap = engine.TileMap(tiled_map, 32)
@@ -29,6 +35,7 @@ Globals.player = player
 Globals.world = tilemap
 Globals.objects = objects
 Globals.camera = camera
+player.movement_bounds = (tilemap.image.get_width(), tilemap.image.get_height())
 
 layer: pytmx.TiledObjectGroup = [l for l in tiled_map.layers if l.name == 'objects'][0]
 for obj in layer:
@@ -76,7 +83,7 @@ while running:
     if player.health <= 0:
         game.screens.gameover_screen(win, clk)
         running = False
-    win.fill('#212121')
+    win.fill((58, 190, 65))
     camera.draw_ysort(win)
     Globals.sprites.draw(win)
     if dbg_mode:

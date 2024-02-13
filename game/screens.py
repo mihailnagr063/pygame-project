@@ -7,7 +7,7 @@ def start_screen(win: pg.Surface, clk: pg.time.Clock):
     ui = pg.sprite.Group()
     start_btn = engine.gui.Button((w // 2, h // 2), 200, 'Начать игру', ui, 'play')
     exit_btn = engine.gui.Button((w // 2, h // 2 + 50), 200, 'Выйти', ui, 'exit')
-    engine.gui.Label((w // 2, h // 2 - 100), 96, 'game', ui)
+    engine.gui.Label((w // 2, h // 2 - 100), 96, 'zelda', ui)
     running = True
     while running:
         for ev in pg.event.get():
@@ -30,7 +30,7 @@ def pause_screen(win: pg.Surface, clk: pg.time.Clock):
     ui = pg.sprite.Group()
     dark_bg = win.copy()
     dark_bg.fill((96, 96, 96), special_flags=pg.BLEND_MULT)
-    engine.gui.Label((w // 2, h // 2 - 100), 96, 'pause', ui)
+    engine.gui.Label((w // 2, h // 2 - 100), 96, 'пауза', ui)
     resume_btn = engine.gui.Button((w // 2, h // 2), 200, 'Продолжить', ui, 'play')
     exit_btn = engine.gui.Button((w // 2, h // 2 + 50), 200, 'Выйти', ui, 'exit')
     running = True
@@ -51,6 +51,7 @@ def pause_screen(win: pg.Surface, clk: pg.time.Clock):
         ui.draw(win)
         pg.display.update()
         clk.tick(60)
+    del ui
 
 
 def gameover_screen(win: pg.Surface, clk: pg.time.Clock):
