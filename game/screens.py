@@ -82,7 +82,7 @@ def winer_screen(win: pg.Surface, clk: pg.time.Clock):
     dark_bg = win.copy()
     dark_bg.fill((96, 96, 96), special_flags=pg.BLEND_MULT)
     engine.gui.Label((w // 2, h // 2 - 100), 96, 'Вы победили', ui)
-    engine.gui.Label((w // 2, h // 2 - 30), 96, f'Вы набрали {globals.Globals.player.score + globals.Globals.player.health}', ui)
+    engine.gui.Label((w // 2, h // 2 - 30), 96, f'Вы набрали {globals.Globals.player.score + globals.Globals.player.health} очков', ui)
     exit_btn = engine.gui.Button((w // 2, h // 2 + 50), 200, 'Выйти', ui, 'exit')
     running = True
     while running:

@@ -23,6 +23,7 @@ Globals.anim_sprites = engine.sprites.AnimatedSpriteGroup()
 pg.mixer.music.load('music/start_screen.mp3')
 pg.mixer.music.play(-1)
 pg.mixer.music.set_volume(0.1)
+win_sound = pg.mixer.Sound('data/sound/win_sound.mp3')
 
 tiled_map = pytmx.load_pygame('data/map.tmx')
 
@@ -43,12 +44,14 @@ Globals.camera = camera
 player.movement_bounds = (tilemap.image.get_width(), tilemap.image.get_height())
 
 layer: pytmx.TiledObjectGroup = [l for l in tiled_map.layers if l.name == 'objects'][0]
+total_enemies = 0
 for obj in layer:
     obj: pytmx.TiledObject
     if obj.name == 'player':
         player.rect.center = (obj.x * 2, obj.y * 2)
         player.collider.move_ip(obj.x * 2, obj.y * 2)
     elif obj.type == 'enemy':
+        total_enemies += 1
         camera.add(game.enemies.Enemy((obj.x * 2, obj.y * 2)))
 
 health_bar = engine.gui.ProgressBar((10, 10), (128, 24), group=Globals.sprites, watch_func=player.get_health)
@@ -86,6 +89,10 @@ while running:
     player.handle_input(pg.key.get_pressed())
     if player.health <= 0:
         game.screens.gameover_screen(win, clk)
+        running = False
+    elif player.killed >= total_enemies:
+        win_sound.play()
+        game.screens.winer_screen(win, clk)
         running = False
     win.fill((58, 190, 65))
     camera.draw_ysort(win)
