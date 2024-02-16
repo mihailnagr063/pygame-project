@@ -13,7 +13,7 @@ class Enemy(sprites.AnimatedSprite):
     reload: int
 
     def __init__(self, pos):
-        super().__init__((32, 64), f'{choice(["walk", "walk2", "walk3"])}')
+        super().__init__((32, 32), f'{choice(["walk", "walk2", "walk3"])}')
         self.speed = 4
         self.hp = 50
         self.damage = 10

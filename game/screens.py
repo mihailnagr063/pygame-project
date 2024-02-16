@@ -76,6 +76,7 @@ def gameover_screen(win: pg.Surface, clk: pg.time.Clock):
         pg.display.update()
         clk.tick(60)
 
+
 def winer_screen(win: pg.Surface, clk: pg.time.Clock):
     size = w, h = win.get_size()
     ui = pg.sprite.Group()
