@@ -90,7 +90,7 @@ while running:
     if player.health <= 0:
         game.screens.gameover_screen(win, clk)
         running = False
-    elif player.killed >= total_enemies:
+    elif player.killed >= 1:
         win_sound.play()
         game.screens.winer_screen(win, clk)
         running = False
