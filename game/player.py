@@ -22,7 +22,7 @@ class Player(sprites.AnimatedSprite):
         self.add_animation('data/player/left1.png', 'left', (16, 32))
         self.add_animation('data/player/right1.png', 'right', (16, 32))
         self.add_animation('data/player/idle.png', 'idle', (16, 32))
-        self.add_animation('data/player/idle.png', 'attack', (16, 32))
+        self.add_animation('data/player/attack1.png', 'attack', (16, 32))
         self.rect = self.image.get_rect(center=pos)
         self.collider = pg.Rect(self.rect)
         self.collider.size = (self.rect.width - 12, 2)
@@ -57,7 +57,6 @@ class Player(sprites.AnimatedSprite):
             self.cool_down = 0
         elif self.cool_down > 0:
             self.cool_down += 1
-
 
     def handle_input(self, keys):
         self.flag = False

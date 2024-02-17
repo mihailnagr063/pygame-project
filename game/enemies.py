@@ -5,7 +5,6 @@ from engine import sprites, utils
 from globals import *
 
 
-
 class Enemy(sprites.AnimatedSprite):
     speed: int
     damage: int
@@ -13,7 +12,7 @@ class Enemy(sprites.AnimatedSprite):
     reload: int
 
     def __init__(self, pos):
-        super().__init__((32, 32), f'{choice(["walk", "walk2", "walk3"])}')
+        super().__init__((32, 32), f'anim')
         self.speed = 4
         self.hp = 50
         self.damage = 10
@@ -21,9 +20,8 @@ class Enemy(sprites.AnimatedSprite):
         self.time_check = 0
         self.rect = self.image.get_rect(center=pos)
         self.direction = pg.Vector2(0, 0)
-        self.add_animation('data/enemies/lynel2.png', 'walk', (16, 16))
-        self.add_animation('data/enemies/moblin2.png', 'walk2', (16, 16))
-        self.add_animation('data/enemies/octorok-red.png', 'walk3', (16, 16))
+        anim_path = f'data/enemies/{choice(["lynel", "lynel2", "moblin2", "octorok-red", "moblin", "octorok"])}.png'
+        self.add_animation(anim_path, 'anim', (16, 16))
         self.collider = pg.Rect(self.rect)
         self.collider.size = (self.rect.width - 12, 8)
         self.collider.y += 24
