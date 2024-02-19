@@ -84,13 +84,16 @@ while running:
             elif ev.key == pg.K_p:
                 game.screens.gameover_screen(win, clk)
                 running = False
+            elif ev.key == pg.K_SPACE:
+                if player.cool_down == 0:
+                    player.sound_atk.play()
     Globals.sprites.update()
     Globals.anim_sprites.update()
     player.handle_input(pg.key.get_pressed())
     if player.health <= 0:
         game.screens.gameover_screen(win, clk)
         running = False
-    elif player.killed >= 1:
+    elif player.killed >= total_enemies:
         win_sound.play()
         game.screens.winer_screen(win, clk)
         running = False
